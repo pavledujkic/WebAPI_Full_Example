@@ -14,7 +14,7 @@ namespace WebAPI_Full_Example
 
             try
             {
-                LogManager.LogFactory.GetCurrentClassLogger().Debug("Application Starting Up");
+                LogManager.GetCurrentClassLogger().Debug("Application Starting Up");
 
                 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +23,9 @@ namespace WebAPI_Full_Example
                 builder.Services.ConfigureCors();
                 builder.Services.ConfigureIISIntegration();
                 builder.Services.ConfigureLoggerService();
+                builder.Services.AddAutoMapper(typeof(Program));
+                builder.Services.ConfigureSqlContext(builder.Configuration);
+                builder.Services.ConfigureRepositoryManager();
                 builder.Services.AddControllers();
 
                 var app = builder.Build();

@@ -2,15 +2,14 @@
 using Entities.DataTransferObjects;
 using Entities.Models;
 
-namespace WebAPI_Full_Example
+namespace WebAPI_Full_Example;
+
+public class MappingProfile : Profile
 {
-    public class MappingProfile : Profile
+    public MappingProfile()
     {
-        public MappingProfile()
-        {
-            CreateMap<Company, CompanyDto>()
-                .ForMember(c => c.FullAdress,
-                    opt => opt.MapFrom(src => $"{src.Address}, {src.Country}"));
-        }
+        CreateMap<Company, CompanyDto>()
+            .ForMember(c => c.FullAdress,
+                opt => opt.MapFrom(src => $"{src.Address}, {src.Country}"));
     }
 }

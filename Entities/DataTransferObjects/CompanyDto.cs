@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Entities.DataTransferObjects;
 
-namespace Entities.DataTransferObjects
+public class CompanyDto
 {
-    public class CompanyDto
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string FullAdress { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = default!;
+    public string FullAdress { get; set; } = default!;
 }

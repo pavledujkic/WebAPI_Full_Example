@@ -1,68 +1,68 @@
+using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
-using System;
 using WebAPI_Full_Example.Extensions;
 
-namespace WebAPI_Full_Example
+namespace WebAPI_Full_Example;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+
+        LogManager.LoadConfiguration("nlog.config");
+
+        try
         {
+            LogManager.GetCurrentClassLogger().Debug("Application Starting Up");
 
-            LogManager.LoadConfiguration("nlog.config");
+            var builder = WebApplication.CreateBuilder(args);
 
-            try
+            // Add services to the container.
+            builder.Services.ConfigureCors();
+            builder.Services.ConfigureIISIntegration();
+            builder.Services.ConfigureLoggerService();
+            builder.Services.AddAutoMapper(typeof(Program));
+            builder.Services.ConfigureSqlContext(builder.Configuration);
+            builder.Services.ConfigureRepositoryManager();
+            builder.Services.AddControllers();
+
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline
+            if (app.Environment.IsDevelopment())
             {
-                LogManager.GetCurrentClassLogger().Debug("Application Starting Up");
-
-                var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-                builder.Services.ConfigureCors();
-                builder.Services.ConfigureIISIntegration();
-                builder.Services.ConfigureLoggerService();
-                builder.Services.AddAutoMapper(typeof(Program));
-                builder.Services.ConfigureSqlContext(builder.Configuration);
-                builder.Services.ConfigureRepositoryManager();
-                builder.Services.AddControllers();
-
-                var app = builder.Build();
-
-                // Configure the HTTP request pipeline
-                if (app.Environment.IsDevelopment())
-                {
-                    app.UseDeveloperExceptionPage();
-                }
-                else
-                {
-                    app.UseHsts();
-                }
-                app.UseHttpsRedirection();
-                app.UseStaticFiles();
-                app.UseCors("CorsPolicy");
-                app.UseForwardedHeaders(new ForwardedHeadersOptions
-                {
-                    ForwardedHeaders = ForwardedHeaders.All
-                });
-                app.UseRouting();
-                app.UseAuthorization();
-                app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllers();
-                });
-                app.Run();
+                app.UseDeveloperExceptionPage();
             }
-            catch (Exception exception)
+            else
             {
-                LogManager.LogFactory.GetCurrentClassLogger().Error(exception, "Stopped program because of exception: " + exception);
-                throw;
+                app.UseHsts();
             }
-            finally
+
+            app.ConfigureExceptionHandler(new LoggerManager());
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseCors("CorsPolicy");
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                LogManager.Shutdown();
-            }
+                ForwardedHeaders = ForwardedHeaders.All
+            });
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+            app.Run();
+        }
+        catch (Exception exception)
+        {
+            LogManager.LogFactory.GetCurrentClassLogger().Error(exception, "Stopped program because of exception: " + exception);
+            throw;
+        }
+        finally
+        {
+            LogManager.Shutdown();
         }
     }
 }

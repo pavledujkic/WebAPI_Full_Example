@@ -25,7 +25,11 @@ public class Program
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.ConfigureSqlContext(builder.Configuration);
             builder.Services.ConfigureRepositoryManager();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(config =>
+            {
+                config.RespectBrowserAcceptHeader = true;
+                config.ReturnHttpNotAcceptable = true;
+            }).AddXmlDataContractSerializerFormatters();
 
             var app = builder.Build();
 

@@ -10,4 +10,8 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         : base(repositoryContext)
     {
     }
+
+    public IEnumerable<Employee> GetEmployees(Guid companyId, bool trackChanges) =>
+        FindByCondition(employee => employee.CompanyId.Equals(companyId), trackChanges)
+            .OrderBy(employee => employee.Name);
 }

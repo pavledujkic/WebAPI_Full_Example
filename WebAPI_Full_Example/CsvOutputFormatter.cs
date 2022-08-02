@@ -26,7 +26,26 @@ namespace WebAPI_Full_Example
 
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
-            throw new NotImplementedException();
+            HttpResponse response = context.HttpContext.Response; 
+            var buffer = new StringBuilder();
+            if (context.Object is IEnumerable<CompanyDto> dtos)
+            {
+                foreach (CompanyDto company in dtos)
+                {
+                    FormatCsv(buffer, company);
+                }
+            }
+            else
+            {
+                FormatCsv(buffer, (CompanyDto)context.Object!);
+            }
+
+            return response.WriteAsync(buffer.ToString());
+        }
+
+        private static void FormatCsv(StringBuilder buffer, CompanyDto company)
+        {
+            buffer.AppendLine($"{company.Id},\"{company.Name},\"{company.FullAddress}\"");
         }
     }
 }

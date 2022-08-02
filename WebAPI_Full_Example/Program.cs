@@ -29,7 +29,8 @@ public class Program
             {
                 config.RespectBrowserAcceptHeader = true;
                 config.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters();
+            }).AddXmlDataContractSerializerFormatters()
+                .AddCustomCSVFormatter();
 
             var app = builder.Build();
 

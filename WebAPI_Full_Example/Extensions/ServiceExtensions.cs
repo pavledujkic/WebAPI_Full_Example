@@ -19,6 +19,7 @@ public static class ServiceExtensions
         });
     }
 
+    // ReSharper disable once InconsistentNaming
     public static void ConfigureIISIntegration(this IServiceCollection services)
     {
         services.Configure<IISOptions>(options =>
@@ -36,4 +37,8 @@ public static class ServiceExtensions
 
     public static void ConfigureRepositoryManager(this IServiceCollection services) =>
         services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+    // ReSharper disable once InconsistentNaming
+    public static IMvcBuilder AddCustomCSVFormatter(this IMvcBuilder builder) =>
+        builder.AddMvcOptions(o => o.OutputFormatters.Add(new CsvOutputFormatter()));
 }

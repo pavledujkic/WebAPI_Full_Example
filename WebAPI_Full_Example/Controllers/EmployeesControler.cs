@@ -128,6 +128,8 @@ namespace WebAPI_Full_Example.Controllers
 
             _repository.Save();
 
+            _logger.LogInfo($"Employee with id: {id} was deleted from the database.");
+
             return NoContent();
         }
     }

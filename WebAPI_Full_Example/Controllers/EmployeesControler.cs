@@ -132,5 +132,42 @@ namespace WebAPI_Full_Example.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{id:guid}")]
+        public IActionResult UpdateEmployeeForCompany(Guid companyId, Guid id, [FromBody] EmployeeForUpdateDto? employee)
+        {
+            if (employee == null)
+            {
+                _logger.LogError("EmployeeForUpdateDto object sent from client is null.");
+
+                return BadRequest("EmployeeForUpdateDto object is null");
+            }
+
+            Company? company = _repository.Company.GetCompany(companyId, false);
+
+            if (company == null)
+            {
+                _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
+
+                return NotFound();
+            }
+
+            Employee? employeeEntity = _repository.Employee.GetEmployee(companyId, id, true);
+
+            if (employeeEntity == null)
+            {
+                _logger.LogInfo($"Employee with id: {id} doesn't exist in the database.");
+
+                return NotFound();
+            }
+
+            _mapper.Map(employee, employeeEntity);
+
+            _repository.Save();
+
+            _logger.LogInfo($"Employee with id: {id} was updated in the database.");
+
+            return NoContent();
+        }
     }
 }

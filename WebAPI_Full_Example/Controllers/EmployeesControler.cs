@@ -2,6 +2,7 @@
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI_Full_Example.Controllers
@@ -162,6 +163,57 @@ namespace WebAPI_Full_Example.Controllers
             }
 
             _mapper.Map(employee, employeeEntity);
+
+            _repository.Save();
+
+            _logger.LogInfo($"Employee with id: {id} was updated in the database.");
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id:guid}")]
+        public IActionResult PartiallyUpdateEmployeeForCompany(Guid companyId, Guid id, 
+            [FromBody] JsonPatchDocument<EmployeeForUpdateDto>? patchDoc)
+        {
+            if (patchDoc == null)
+            {
+                _logger.LogError("JsonPatchDocument object sent from client is null.");
+
+                return BadRequest("JsonPatchDocument object is null");
+            }
+
+            Company? company = _repository.Company.GetCompany(companyId, false);
+
+            if (company == null)
+            {
+                _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
+
+                return NotFound();
+            }
+
+            Employee? employeeEntity = _repository.Employee.GetEmployee(companyId, id, true);
+
+            if (employeeEntity == null)
+            {
+                _logger.LogInfo($"Employee with id: {id} doesn't exist in the database.");
+
+                return NotFound();
+            }
+
+            var employeeToPatch = _mapper.Map<EmployeeForUpdateDto>(employeeEntity);
+
+            patchDoc.ApplyTo(employeeToPatch, ModelState);
+
+            TryValidateModel(employeeToPatch);
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model object sent from client.");
+
+                return BadRequest(ModelState);
+            }
+
+            _mapper.Map(employeeToPatch, employeeEntity);
 
             _repository.Save();
 

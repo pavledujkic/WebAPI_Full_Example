@@ -1,5 +1,6 @@
 using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using NLog;
 using WebAPI_Full_Example.Extensions;
 
@@ -16,7 +17,7 @@ public class Program
         {
             LogManager.GetCurrentClassLogger().Debug("Application Starting Up");
 
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             builder.Services.ConfigureCors();
@@ -32,8 +33,10 @@ public class Program
             }).AddNewtonsoftJson()
                 .AddXmlDataContractSerializerFormatters()
                 .AddCustomCSVFormatter();
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+                options.SuppressModelStateInvalidFilter = true);
 
-            var app = builder.Build();
+            WebApplication app = builder.Build();
 
             // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())

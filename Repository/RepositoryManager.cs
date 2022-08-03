@@ -24,5 +24,5 @@ public class RepositoryManager : IRepositoryManager
         get { return _employeeRepository ??= new EmployeeRepository(_repositoryContext); }
     }
 
-    public void Save() => _repositoryContext.SaveChanges();
+    public Task SaveAsync() => _repositoryContext.SaveChangesAsync();
 }

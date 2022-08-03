@@ -1,51 +1,50 @@
-﻿using System.Text;
-using Entities.DataTransferObjects;
+﻿using Entities.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
+using System.Text;
 
-namespace WebAPI_Full_Example
+namespace WebAPI_Full_Example;
+
+public class CsvOutputFormatter : TextOutputFormatter
 {
-    public class CsvOutputFormatter : TextOutputFormatter
+    public CsvOutputFormatter()
     {
-        public CsvOutputFormatter()
+        SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/csv"));
+        SupportedEncodings.Add(Encoding.UTF8);
+        SupportedEncodings.Add(Encoding.Unicode);
+    }
+
+    protected override bool CanWriteType(Type? type)
+    {
+        if (typeof(CompanyDto).IsAssignableFrom(type) || typeof(IEnumerable<CompanyDto>).IsAssignableFrom(type))
         {
-            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/csv"));
-            SupportedEncodings.Add(Encoding.UTF8);
-            SupportedEncodings.Add(Encoding.Unicode);
+            return base.CanWriteType(type);
         }
 
-        protected override bool CanWriteType(Type? type)
+        return false;
+    }
+
+    public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+    {
+        HttpResponse response = context.HttpContext.Response;
+        var buffer = new StringBuilder();
+        if (context.Object is IEnumerable<CompanyDto> dtos)
         {
-            if (typeof(CompanyDto).IsAssignableFrom(type) || typeof(IEnumerable<CompanyDto>).IsAssignableFrom(type))
+            foreach (CompanyDto company in dtos)
             {
-                return base.CanWriteType(type);
+                FormatCsv(buffer, company);
             }
-
-            return false;
         }
-
-        public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+        else
         {
-            HttpResponse response = context.HttpContext.Response; 
-            var buffer = new StringBuilder();
-            if (context.Object is IEnumerable<CompanyDto> dtos)
-            {
-                foreach (CompanyDto company in dtos)
-                {
-                    FormatCsv(buffer, company);
-                }
-            }
-            else
-            {
-                FormatCsv(buffer, (CompanyDto)context.Object!);
-            }
-
-            return response.WriteAsync(buffer.ToString());
+            FormatCsv(buffer, (CompanyDto)context.Object!);
         }
 
-        private static void FormatCsv(StringBuilder buffer, CompanyDto company)
-        {
-            buffer.AppendLine($"{company.Id},\"{company.Name},\"{company.FullAddress}\"");
-        }
+        return response.WriteAsync(buffer.ToString());
+    }
+
+    private static void FormatCsv(StringBuilder buffer, CompanyDto company)
+    {
+        buffer.AppendLine($"{company.Id},\"{company.Name},\"{company.FullAddress}\"");
     }
 }

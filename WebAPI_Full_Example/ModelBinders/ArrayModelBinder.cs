@@ -1,7 +1,6 @@
-﻿using System.Collections;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel;
 using System.Reflection;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace WebAPI_Full_Example.ModelBinders;
 
@@ -24,7 +23,7 @@ public class ArrayModelBinder : IModelBinder
         }
 
         Type genericType = bindingContext.ModelMetadata.ModelType.GetTypeInfo().GenericTypeArguments[0];
-        
+
         TypeConverter converter = TypeDescriptor.GetConverter(genericType);
 
         var objectArray = providedValue.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
@@ -32,13 +31,13 @@ public class ArrayModelBinder : IModelBinder
             .ToArray();
 
         var guidArray = Array.CreateInstance(genericType, objectArray.Length);
-        
+
         objectArray.CopyTo(guidArray, 0);
-        
+
         bindingContext.Model = guidArray;
 
         bindingContext.Result = ModelBindingResult.Success(bindingContext.Model);
-        
+
         return Task.CompletedTask;
     }
 }

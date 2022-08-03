@@ -16,7 +16,9 @@ public class Company
     [MaxLength(60, ErrorMessage = "Maximum length for the Address is 60 characters")]
     public string Address { get; set; } = default!;
 
-    public string? Country { get; set; }
+    [Required(ErrorMessage = "Company country is a required field.")]
+    [MaxLength(60, ErrorMessage = "Maximum length for the Address is 60 characters")]
+    public string Country { get; set; } = default!;
 
     public ICollection<Employee> Employees { get; set; } = default!;
 }

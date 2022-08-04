@@ -83,14 +83,13 @@ public class EmployeesControler : ControllerBase
             return Task.FromResult<IActionResult>(BadRequest("EmployeeForCreationDto object is null"));
         }
 
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Invalid model state for the EmployeeForCreationDto object");
+        if (ModelState.IsValid)
+            return EmployeeForCompany(companyId, employee);
 
-            return Task.FromResult<IActionResult>(UnprocessableEntity(ModelState));
-        }
+        _logger.LogError("Invalid model state for the EmployeeForCreationDto object");
 
-        return EmployeeForCompany(companyId, employee);
+        return Task.FromResult<IActionResult>(UnprocessableEntity(ModelState));
+
     }
 
     private async Task<IActionResult> EmployeeForCompany(Guid companyId, EmployeeForCreationDto employee)
@@ -156,14 +155,13 @@ public class EmployeesControler : ControllerBase
             return Task.FromResult<IActionResult>(BadRequest("EmployeeForUpdateDto object is null"));
         }
 
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Invalid model state for the EmployeeForUpdateDto object");
+        if (ModelState.IsValid)
+            return ActionResult(companyId, id, employee);
 
-            return Task.FromResult<IActionResult>(UnprocessableEntity(ModelState));
-        }
+        _logger.LogError("Invalid model state for the EmployeeForUpdateDto object");
 
-        return ActionResult(companyId, id, employee);
+        return Task.FromResult<IActionResult>(UnprocessableEntity(ModelState));
+
     }
 
     private async Task<IActionResult> ActionResult(Guid companyId, Guid id, EmployeeForUpdateDto employee)
@@ -199,7 +197,8 @@ public class EmployeesControler : ControllerBase
     public Task<IActionResult> PartiallyUpdateEmployeeForCompany(Guid companyId, Guid id,
         [FromBody] JsonPatchDocument<EmployeeForUpdateDto>? patchDoc)
     {
-        if (patchDoc != null) return UnprocessableEntityObjectResult(companyId, id, patchDoc);
+        if (patchDoc != null)
+            return UnprocessableEntityObjectResult(companyId, id, patchDoc);
 
         _logger.LogError("JsonPatchDocument object sent from client is null.");
 

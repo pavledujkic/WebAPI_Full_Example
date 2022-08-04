@@ -17,7 +17,6 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
             .OrderBy(company => company.Name)
             .ToListAsync();
 
-
     public Task<Company?> GetCompanyAsync(Guid companyId, bool trackChanges) =>
         FindByCondition(company => company.Id.Equals(companyId), trackChanges)
             .SingleOrDefaultAsync();

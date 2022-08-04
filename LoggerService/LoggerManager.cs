@@ -5,7 +5,7 @@ namespace LoggerService;
 
 public class LoggerManager : ILoggerManager
 {
-    private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
     public void LogDebug(string message)
     {

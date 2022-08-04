@@ -6,8 +6,8 @@ namespace Repository;
 public class RepositoryManager : IRepositoryManager
 {
     private readonly RepositoryContext _repositoryContext;
-    private ICompanyRepository? _companyRepository;
-    private IEmployeeRepository? _employeeRepository;
+    private CompanyRepository? _companyRepository;
+    private EmployeeRepository? _employeeRepository;
 
     public RepositoryManager(RepositoryContext repositoryContext)
     {

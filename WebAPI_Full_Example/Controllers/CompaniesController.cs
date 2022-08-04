@@ -190,14 +190,13 @@ public class CompaniesController : ControllerBase
             return Task.FromResult<IActionResult>(BadRequest("CompanyForUpdateDto object is null"));
         }
 
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Invalid model state in the companyForUpdateDto object sent from client.");
+        if (ModelState.IsValid)
+            return NoContentResult(id, company);
 
-            return Task.FromResult<IActionResult>(UnprocessableEntity(ModelState));
-        }
+        _logger.LogError("Invalid model state in the companyForUpdateDto object sent from client.");
 
-        return NoContentResult(id, company);
+        return Task.FromResult<IActionResult>(UnprocessableEntity(ModelState));
+
     }
 
     private async Task<IActionResult> NoContentResult(Guid id, CompanyForUpdateDto company)

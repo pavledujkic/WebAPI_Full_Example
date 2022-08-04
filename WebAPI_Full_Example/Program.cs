@@ -2,6 +2,7 @@ using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using WebAPI_Full_Example.ActionFilters;
 using WebAPI_Full_Example.Extensions;
 
 namespace WebAPI_Full_Example;
@@ -35,6 +36,9 @@ public class Program
                 .AddCustomCSVFormatter();
             builder.Services.Configure<ApiBehaviorOptions>(options =>
                 options.SuppressModelStateInvalidFilter = true);
+            builder.Services.AddScoped<ValidationFilterAttribute>();
+            builder.Services.AddScoped<ValidateCompanyExistsAttribute>();
+            builder.Services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
 
             WebApplication app = builder.Build();
 

@@ -13,13 +13,22 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
     {
     }
 
-    public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId,
-        EmployeeParameters employeeParameters, bool trackChanges) =>
-       await FindByCondition(employee => employee.CompanyId.Equals(companyId), trackChanges)
-            .OrderBy(employee => employee.Name)
-            .Skip((employeeParameters.PageNumber - 1) * employeeParameters.PageSize)
-            .Take(employeeParameters.PageSize)
-            .ToListAsync();
+    public async Task<PagedList<Employee>> GetEmployeesAsync(Guid companyId,
+        EmployeeParameters employeeParameters, bool trackChanges)
+    {
+        var employees = await FindByCondition(employee => employee.CompanyId.Equals(companyId)
+                , trackChanges)
+              .OrderBy(employee => employee.Name)
+              .Skip((employeeParameters.PageNumber - 1) * employeeParameters.PageSize)
+              .Take(employeeParameters.PageSize)
+              .ToListAsync();
+
+        var count = await FindByCondition(e =>
+            e.CompanyId.Equals(companyId), trackChanges).CountAsync();
+
+        return new PagedList<Employee>(employees, count, employeeParameters.PageNumber,
+            employeeParameters.PageSize);
+    }
 
     public Task<Employee?> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges) =>
        FindByCondition(employee => employee.CompanyId.Equals(companyId) && employee.Id.Equals(id), trackChanges)

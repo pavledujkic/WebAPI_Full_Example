@@ -5,6 +5,7 @@ using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using WebAPI_Full_Example.ActionFilters;
 
 namespace WebAPI_Full_Example.Controllers;
@@ -33,6 +34,9 @@ public class EmployeesControler : ControllerBase
 
         var employeesFromDb = await _repository.Employee.GetEmployeesAsync(companyId, 
             employeeParameters, false);
+
+        Response.Headers.Add("X-pagination",
+            JsonConvert.SerializeObject(employeesFromDb.MetaData));
 
         var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
 

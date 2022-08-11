@@ -17,12 +17,15 @@ public class EmployeesControler : ControllerBase
     private readonly ILoggerManager _logger;
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
+    private readonly IDataShaper<EmployeeDto> _dataShaper;
 
-    public EmployeesControler(ILoggerManager logger, IRepositoryManager repository, IMapper mapper)
+    public EmployeesControler(ILoggerManager logger, 
+        IRepositoryManager repository, IMapper mapper, IDataShaper<EmployeeDto> dataShaper)
     {
         _logger = logger;
         _repository = repository;
         _mapper = mapper;
+        _dataShaper = dataShaper;
     }
 
     [HttpGet]
@@ -43,7 +46,7 @@ public class EmployeesControler : ControllerBase
 
         var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
 
-        return Ok(employeesDto);
+        return Ok(_dataShaper.ShapeData(employeesDto, employeeParameters.Fields));
     }
 
     [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]

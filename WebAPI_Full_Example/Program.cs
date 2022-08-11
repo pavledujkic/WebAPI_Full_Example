@@ -1,7 +1,10 @@
+using Contracts;
+using Entities.DataTransferObjects;
 using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using Repository.DataShaping;
 using WebAPI_Full_Example.ActionFilters;
 using WebAPI_Full_Example.Extensions;
 
@@ -39,6 +42,7 @@ public class Program
             builder.Services.AddScoped<ValidationFilterAttribute>();
             builder.Services.AddScoped<ValidateCompanyExistsAttribute>();
             builder.Services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
+            builder.Services.AddScoped <IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
 
             WebApplication app = builder.Build();
 

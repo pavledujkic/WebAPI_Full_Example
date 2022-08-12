@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace WebAPI_Full_Example.ModelBinders;
+namespace CompanyEmployees.ModelBinders;
 
 public class ArrayModelBinder : IModelBinder
 {

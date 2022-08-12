@@ -1,9 +1,9 @@
-﻿using Contracts;
+﻿using System.Net;
+using Contracts;
 using Entities.ErrorModel;
 using Microsoft.AspNetCore.Diagnostics;
-using System.Net;
 
-namespace WebAPI_Full_Example.Extensions;
+namespace CompanyEmployees.Extensions;
 
 public static class ExceptionMiddlewareExtensions
 {

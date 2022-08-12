@@ -1,9 +1,9 @@
-﻿using Entities.DataTransferObjects;
+﻿using System.Text;
+using Entities.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
-using System.Text;
 
-namespace WebAPI_Full_Example;
+namespace CompanyEmployees;
 
 public class CsvOutputFormatter : TextOutputFormatter
 {

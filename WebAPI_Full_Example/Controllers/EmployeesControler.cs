@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CompanyEmployees.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
@@ -6,9 +7,8 @@ using Entities.RequestFeatures;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using WebAPI_Full_Example.ActionFilters;
 
-namespace WebAPI_Full_Example.Controllers;
+namespace CompanyEmployees.Controllers;
 
 [Route("api/companies/{companyId:guid}/employees")]
 [ApiController]

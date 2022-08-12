@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Entities.Configuration;
+namespace Repository.Configuration;
 
 public class CompanyConfiguration : IEntityTypeConfiguration<Company>
 {

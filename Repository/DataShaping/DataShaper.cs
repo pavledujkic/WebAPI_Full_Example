@@ -58,9 +58,11 @@ public class DataShaper<T>: IDataShaper<T> where T : class
     { 
         var shapedData = new List<ExpandoObject>();
 
+        var requiredPropertiesList = requiredProperties.ToList();
+
         foreach (T entity in entities)
         {
-            ExpandoObject shapedObject = FetchDataForEntity(entity, requiredProperties); 
+            ExpandoObject shapedObject = FetchDataForEntity(entity, requiredPropertiesList); 
             
             shapedData.Add(shapedObject);
         }

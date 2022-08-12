@@ -3,6 +3,6 @@
 public class CompanyDto
 {
     public Guid Id { get; set; }
-    public string Name { get; set; } = default!;
-    public string FullAddress { get; set; } = default!;
+    public string? Name { get; set; }
+    public string? FullAddress { get; set; }
 }

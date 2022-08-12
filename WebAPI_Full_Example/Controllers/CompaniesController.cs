@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
+using CompanyEmployees.ActionFilters;
+using CompanyEmployees.ModelBinders;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI_Full_Example.ActionFilters;
-using WebAPI_Full_Example.ModelBinders;
 
-namespace WebAPI_Full_Example.Controllers;
+namespace CompanyEmployees.Controllers;
 
 [Route("api/companies")]
 [ApiController]

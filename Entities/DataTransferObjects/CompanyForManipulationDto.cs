@@ -6,15 +6,15 @@ public abstract class CompanyForManipulationDto
 {
     [Required(ErrorMessage = "Company name is a required field.")]
     [MaxLength(50, ErrorMessage = "Maximum length for the Name is 50 characters.")]
-    public string Name { get; set; } = default!;
+    public string? Name { get; set; }
 
     [Required(ErrorMessage = "Company Address is a required field.")]
     [MaxLength(150, ErrorMessage = "Maximum length for the Name is 150 characters.")]
-    public string Address { get; set; } = default!;
+    public string? Address { get; set; }
 
     [Required(ErrorMessage = "Company Country is a required field.")]
     [MaxLength(50, ErrorMessage = "Maximum length for the Name is 50 characters.")]
-    public string Country { get; set; } = default!;
+    public string? Country { get; set; }
 
     public IEnumerable<EmployeeForCreationDto>? Employees { get; set; }
 }

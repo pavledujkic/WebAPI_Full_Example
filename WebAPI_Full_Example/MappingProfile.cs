@@ -2,7 +2,7 @@
 using Entities.DataTransferObjects;
 using Entities.Models;
 
-namespace WebAPI_Full_Example;
+namespace CompanyEmployees;
 
 public class MappingProfile : Profile
 {

@@ -2,8 +2,9 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace CompanyEmployees.ModelBinders;
+namespace CompanyEmployees.Presentation.ModelBinders;
 
+// ReSharper disable once UnusedMember.Global
 public class ArrayModelBinder : IModelBinder
 {
     public Task BindModelAsync(ModelBindingContext bindingContext)
@@ -27,7 +28,7 @@ public class ArrayModelBinder : IModelBinder
         TypeConverter converter = TypeDescriptor.GetConverter(genericType);
 
         var objectArray = providedValue.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(x => converter.ConvertFromString(x.Trim()))
+            .Select(s => converter.ConvertFromString(s.Trim()))
             .ToArray();
 
         var guidArray = Array.CreateInstance(genericType, objectArray.Length);

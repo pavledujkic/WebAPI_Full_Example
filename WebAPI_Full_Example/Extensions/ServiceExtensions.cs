@@ -26,7 +26,7 @@ public static class ServiceExtensions
         });
 
     public static void ConfigureLoggerService(this IServiceCollection services) =>
-        services.AddScoped<ILoggerManager, LoggerManager>();
+        services.AddSingleton<ILoggerManager, LoggerManager>();
 
     public static void ConfigureRepositoryManager(this IServiceCollection services) =>
         services.AddScoped<IRepositoryManager, RepositoryManager>();
@@ -41,5 +41,6 @@ public static class ServiceExtensions
 
     // ReSharper disable once InconsistentNaming
     public static IMvcBuilder AddCustomCSVFormatter(this IMvcBuilder builder) =>
-        builder.AddMvcOptions(o => o.OutputFormatters.Add(new CsvOutputFormatter()));
+        builder.AddMvcOptions(config => config.OutputFormatters
+            .Add(new CsvOutputFormatter()));
 }

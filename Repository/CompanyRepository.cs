@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
-public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
+internal sealed class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
 {
     public CompanyRepository(RepositoryContext repositoryContext)
         : base(repositoryContext)
@@ -26,8 +26,5 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
         await FindByCondition(company => ids.Contains(company.Id), trackChanges)
             .ToListAsync();
 
-    public void DeleteCompany(Company company)
-    {
-        Delete(company);
-    }
+    public void DeleteCompany(Company company) => Delete(company);
 }

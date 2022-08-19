@@ -1,4 +1,5 @@
-﻿using Contracts;
+﻿using CompanyEmployees.Presentation.Controllers;
+using Contracts;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -18,7 +19,7 @@ public class ValidateCompanyExistsAttribute : IAsyncActionFilter
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var method = context.HttpContext.Request.Method;
-        var isCompaniesController = context.Controller is Controllers.CompaniesController;
+        var isCompaniesController = context.Controller is CompaniesController;
         var trackChanges = method.Equals("PUT");
         Guid id;
 

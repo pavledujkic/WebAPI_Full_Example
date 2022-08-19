@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using Entities.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
+using Shared.DataTransferObjects;
 
 namespace CompanyEmployees;
 
@@ -27,7 +27,8 @@ public class CsvOutputFormatter : TextOutputFormatter
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
     {
         HttpResponse response = context.HttpContext.Response;
-        var buffer = new StringBuilder();
+        var buffer = new StringBuilder(100);
+
         if (context.Object is IEnumerable<CompanyDto> dtos)
         {
             foreach (CompanyDto company in dtos)

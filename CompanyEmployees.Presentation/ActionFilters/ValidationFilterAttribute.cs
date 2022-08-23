@@ -1,17 +1,10 @@
-﻿using Contracts;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace CompanyEmployees.ActionFilters;
+namespace CompanyEmployees.Presentation.ActionFilters;
 
 public class ValidationFilterAttribute : IActionFilter
 {
-    private readonly ILoggerManager _logger;
-    public ValidationFilterAttribute(ILoggerManager logger)
-    {
-        _logger = logger;
-    }
-
     public void OnActionExecuting(ActionExecutingContext context)
     {
         var action = context.RouteData.Values["action"];
@@ -21,8 +14,6 @@ public class ValidationFilterAttribute : IActionFilter
 
         if (param == null)
         {
-            _logger.LogError($"Object sent from client is null. Controller: {controller}, action: {action}");
-
             context.Result = new BadRequestObjectResult($"Object is null. Controller: {controller}, action: {action}");
 
             return;
@@ -30,8 +21,6 @@ public class ValidationFilterAttribute : IActionFilter
 
         if (context.ModelState.IsValid)
             return;
-
-        _logger.LogError($"Invalid model state for the object. Controller: {controller}, action: {action}");
 
         context.Result = new UnprocessableEntityObjectResult(context.ModelState);
     }

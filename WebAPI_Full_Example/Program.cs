@@ -1,5 +1,5 @@
-using CompanyEmployees.ActionFilters;
 using CompanyEmployees.Extensions;
+using CompanyEmployees.Presentation.ActionFilters;
 using Contracts;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -30,8 +30,8 @@ builder.Services.AddControllers(config =>
     .AddXmlDataContractSerializerFormatters()
     .AddCustomCSVFormatter();
 builder.Services.AddScoped<ValidationFilterAttribute>();
-builder.Services.AddScoped<ValidateCompanyExistsAttribute>();
-builder.Services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
+//builder.Services.AddScoped<ValidateCompanyExistsAttribute>();
+//builder.Services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
 //builder.Services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
 
 WebApplication app = builder.Build();

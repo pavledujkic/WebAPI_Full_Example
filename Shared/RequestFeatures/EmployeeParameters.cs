@@ -1,6 +1,6 @@
 ﻿
 
-namespace Entities.RequestFeatures;
+namespace Shared.RequestFeatures;
 
 public class EmployeeParameters : RequestParameters
 {

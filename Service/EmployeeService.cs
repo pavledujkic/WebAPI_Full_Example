@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Dynamic;
+using AutoMapper;
 using Contracts;
 using Entities.Exceptions;
 using Entities.Models;
@@ -13,34 +14,42 @@ internal sealed class EmployeeService : IEmployeeService
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
+    private readonly IDataShaper<EmployeeDto> _dataShaper;
 
     public EmployeeService(IRepositoryManager repository, ILoggerManager
-        logger, IMapper mapper)
+        logger, IMapper mapper, IDataShaper<EmployeeDto> dataShaper)
     {
         _repository = repository;
         _logger = logger;
         _mapper = mapper;
+        _dataShaper = dataShaper;
     }
 
-    public async Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetEmployeesAsync
+    public async Task<(IEnumerable<Entity> employees, MetaData metaData)> GetEmployeesAsync
         (Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
     {
+        if (!employeeParameters.ValidAgeRange)
+            throw new MaxAgeRangeBadRequestException();
+
         await CheckIfCompanyExists(companyId, trackChanges);
-        
+
         var employeesWithMetaData = await _repository.Employee
             .GetEmployeesAsync(companyId, employeeParameters, trackChanges);
-        
-        var employeesDto = 
+
+        var employeesDto =
             _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
         
-        return (employees: employeesDto, metaData: employeesWithMetaData.MetaData);
+        var shapedData = _dataShaper.ShapeData(employeesDto, 
+            employeeParameters.Fields);
+
+        return (employees: shapedData, metaData: employeesWithMetaData.MetaData);
     }
 
     public async Task<EmployeeDto> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)
     {
         await CheckIfCompanyExists(companyId, trackChanges);
 
-        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId, 
+        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId,
             id, trackChanges);
 
         var employee = _mapper.Map<EmployeeDto>(employeeDb);
@@ -67,7 +76,7 @@ internal sealed class EmployeeService : IEmployeeService
     {
         await CheckIfCompanyExists(companyId, trackChanges);
 
-        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId, 
+        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId,
             id, trackChanges);
 
         _repository.Employee.DeleteEmployee(employeeDb);
@@ -80,7 +89,7 @@ internal sealed class EmployeeService : IEmployeeService
     {
         await CheckIfCompanyExists(companyId, compTrackChanges);
 
-        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId, 
+        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId,
             id, empTrackChanges);
 
         _mapper.Map(employeeForUpdate, employeeDb);
@@ -88,20 +97,20 @@ internal sealed class EmployeeService : IEmployeeService
         await _repository.SaveAsync();
     }
 
-    public async Task<(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity)> 
+    public async Task<(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity)>
         GetEmployeeForPatchAsync(Guid companyId, Guid id, bool compTrackChanges, bool empTrackChanges)
     {
         await CheckIfCompanyExists(companyId, compTrackChanges);
 
-        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId, id, 
+        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId, id,
             empTrackChanges);
 
         var employeeToPatch = _mapper.Map<EmployeeForUpdateDto>(employeeDb);
 
         return (employeeToPatch, employeeEntity: employeeDb);
     }
-    
-    public Task SaveChangesForPatchAsync(EmployeeForUpdateDto employeeToPatch, Employee 
+
+    public Task SaveChangesForPatchAsync(EmployeeForUpdateDto employeeToPatch, Employee
         employeeEntity)
     {
         _mapper.Map(employeeToPatch, employeeEntity);
@@ -110,7 +119,7 @@ internal sealed class EmployeeService : IEmployeeService
 
     private async Task CheckIfCompanyExists(Guid companyId, bool trackChanges)
     {
-        Company? company = await _repository.Company.GetCompanyAsync(companyId, 
+        Company? company = await _repository.Company.GetCompanyAsync(companyId,
             trackChanges);
 
         if (company is null)
@@ -120,7 +129,7 @@ internal sealed class EmployeeService : IEmployeeService
     private async Task<Employee> GetEmployeeForCompanyAndCheckIfItExists
         (Guid companyId, Guid id, bool trackChanges)
     {
-        Employee? employeeDb = await _repository.Employee.GetEmployeeAsync(companyId, id, 
+        Employee? employeeDb = await _repository.Employee.GetEmployeeAsync(companyId, id,
             trackChanges);
 
         if (employeeDb is null)

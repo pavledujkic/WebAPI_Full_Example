@@ -36,19 +36,19 @@ internal sealed class CompanyService : ICompanyService
         Company company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
 
         var companyDto = _mapper.Map<CompanyDto>(company);
-        
+
         return companyDto;
     }
 
     public async Task<CompanyDto> CreateCompanyAsync(CompanyForCreationDto company)
     {
         var companyEntity = _mapper.Map<Company>(company);
-        
+
         _repository.Company.CreateCompany(companyEntity);
         await _repository.SaveAsync();
-        
+
         var companyToReturn = _mapper.Map<CompanyDto>(companyEntity);
-        
+
         return companyToReturn;
     }
 
@@ -58,7 +58,7 @@ internal sealed class CompanyService : ICompanyService
             throw new IdParametersBadRequestException();
 
         var idsList = ids.ToList();
-        var companyEntities = await 
+        var companyEntities = await
             _repository.Company.GetByIdsAsync(idsList, trackChanges);
 
         if (idsList.Count != companyEntities.Count())
@@ -74,26 +74,26 @@ internal sealed class CompanyService : ICompanyService
     {
         if (companyCollection is null)
             throw new CompanyCollectionBadRequest();
-        
+
         var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
-        
+
         foreach (Company company in companyEntities)
         {
-          _repository.Company.CreateCompany(company);
+            _repository.Company.CreateCompany(company);
         }
         await _repository.SaveAsync();
-        
-        var companyCollectionToReturn = 
+
+        var companyCollectionToReturn =
             _mapper.Map<IEnumerable<CompanyDto>>(companyEntities).ToList();
         var ids = string.Join(",", companyCollectionToReturn.Select(c => c.Id));
-        
+
         return (companies: companyCollectionToReturn, ids);
     }
 
     public async Task DeleteCompanyAsync(Guid companyId, bool trackChanges)
     {
         Company company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
-        
+
         _repository.Company.DeleteCompany(company);
         await _repository.SaveAsync();
     }
@@ -101,7 +101,7 @@ internal sealed class CompanyService : ICompanyService
     public async Task UpdateCompanyAsync(Guid companyId, CompanyForUpdateDto companyForUpdate, bool trackChanges)
     {
         Company company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
-        
+
         _mapper.Map(companyForUpdate, company);
         await _repository.SaveAsync();
     }

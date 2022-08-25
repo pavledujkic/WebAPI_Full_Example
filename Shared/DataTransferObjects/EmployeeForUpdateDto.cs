@@ -1,3 +1,3 @@
 ﻿namespace Shared.DataTransferObjects;
 
-public record EmployeeForUpdateDto: EmployeeForManipulationDto;
+public record EmployeeForUpdateDto : EmployeeForManipulationDto;

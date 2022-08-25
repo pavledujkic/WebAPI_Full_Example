@@ -11,9 +11,9 @@ public class RepositoryManager : IRepositoryManager
     public RepositoryManager(RepositoryContext repositoryContext)
     {
         _repositoryContext = repositoryContext;
-        _companyRepository = new Lazy<ICompanyRepository>(() => 
+        _companyRepository = new Lazy<ICompanyRepository>(() =>
             new CompanyRepository(_repositoryContext));
-        _employeeRepository = new Lazy<IEmployeeRepository>(() => 
+        _employeeRepository = new Lazy<IEmployeeRepository>(() =>
             new EmployeeRepository(_repositoryContext));
     }
 

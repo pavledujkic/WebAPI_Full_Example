@@ -21,13 +21,13 @@ public class EmployeesControler : ControllerBase
     public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
         [FromQuery] EmployeeParameters employeeParameters)
     {
-        (var employees, MetaData metaData) = await 
-            _service.EmployeeService.GetEmployeesAsync(companyId, 
+        (var employees, MetaData metaData) = await
+            _service.EmployeeService.GetEmployeesAsync(companyId,
                 employeeParameters, trackChanges: false);
-        
-        Response.Headers.Add("X-Pagination", 
+
+        Response.Headers.Add("X-Pagination",
             JsonSerializer.Serialize(metaData));
-        
+
         return Ok(employees);
     }
 

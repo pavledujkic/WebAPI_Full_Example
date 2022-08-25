@@ -3,7 +3,7 @@
 public sealed class PagedList<T> : List<T>
 {
     public MetaData MetaData { get; set; }
-    
+
     public PagedList(IEnumerable<T> items, int count, int pageNumber, int pageSize)
     {
         MetaData = new MetaData
@@ -13,7 +13,7 @@ public sealed class PagedList<T> : List<T>
             CurrentPage = pageNumber,
             TotalPages = (int)Math.Ceiling(count / (double)pageSize)
         };
-        
+
         AddRange(items);
     }
 }

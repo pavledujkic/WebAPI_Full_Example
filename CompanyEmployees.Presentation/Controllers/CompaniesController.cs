@@ -68,7 +68,7 @@ public class CompaniesController : ControllerBase
     public async Task<IActionResult> DeleteCompany(Guid id)
     {
         await _service.CompanyService.DeleteCompanyAsync(id, trackChanges: false);
-        
+
         return NoContent();
     }
 
@@ -77,7 +77,7 @@ public class CompaniesController : ControllerBase
     public async Task<IActionResult> UpdateCompany(Guid id, [FromBody] CompanyForUpdateDto? company)
     {
         await _service.CompanyService.UpdateCompanyAsync(id, company!, trackChanges: true);
-        
+
         return NoContent();
     }
 }

@@ -8,7 +8,8 @@ public class OrderQueryBuilder
     public static string CreateOrderQuery<T>(string orderByQueryString)
     {
         var orderParams = orderByQueryString.Trim().Split(',');
-        var propertyInfos = typeof(T)
+        var propertyInfos =
+            typeof(T)
             .GetProperties(BindingFlags.Public | BindingFlags.Instance);
         var orderQueryBuilder = new StringBuilder(38);
 
@@ -18,6 +19,7 @@ public class OrderQueryBuilder
                 continue;
 
             var propertyFromQueryName = param.Split(" ")[0];
+
             PropertyInfo? objectProperty = propertyInfos.FirstOrDefault(pi =>
                 pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
 

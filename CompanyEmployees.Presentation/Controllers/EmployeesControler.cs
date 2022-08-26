@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using CompanyEmployees.Presentation.ActionFilters;
+using Entities.LinkModels;
 using Entities.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -17,18 +18,24 @@ public class EmployeesControler : ControllerBase
 
     public EmployeesControler(IServiceManager service) => _service = service;
 
-    [HttpGet]
+    [HttpGet(Name = "GetEmployeesForCompany")]
+    [HttpHead]
+    [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
         [FromQuery] EmployeeParameters employeeParameters)
     {
-        (var employees, MetaData metaData) = await
-            _service.EmployeeService.GetEmployeesAsync(companyId,
-                employeeParameters, trackChanges: false);
+        var linkParams = new LinkParameters(employeeParameters, HttpContext);
+        
+        (LinkResponse? linkResponse, MetaData? metaData) = 
+            await _service.EmployeeService.GetEmployeesAsync(companyId, 
+                linkParams, trackChanges: false);
 
-        Response.Headers.Add("X-Pagination",
+        Response.Headers.Add("X-Pagination", 
             JsonSerializer.Serialize(metaData));
 
-        return Ok(employees);
+        return linkResponse.HasLinks ? 
+            Ok(linkResponse.LinkedEntities) :
+            Ok(linkResponse.ShapedEntities);
     }
 
     [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
@@ -40,7 +47,7 @@ public class EmployeesControler : ControllerBase
         return Ok(employee);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreateEmployeeForCompany")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId,
         [FromBody] EmployeeForCreationDto? employee)
@@ -53,7 +60,7 @@ public class EmployeesControler : ControllerBase
             new { companyId, id = employeeToReturn.Id }, employeeToReturn);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id:guid}", Name = "DeleteEmployeeForCompany")]
     public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId, Guid id)
     {
         await _service.EmployeeService.DeleteEmployeeForCompanyAsync(companyId, id, trackChanges:
@@ -62,7 +69,7 @@ public class EmployeesControler : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateEmployeeForCompany")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId, Guid id,
         [FromBody] EmployeeForUpdateDto? employee)
@@ -73,7 +80,7 @@ public class EmployeesControler : ControllerBase
         return NoContent();
     }
 
-    [HttpPatch("{id:guid}")]
+    [HttpPatch("{id:guid}", Name = "PartiallyUpdateEmployeeForCompany")]
     public async Task<IActionResult> PartiallyUpdateEmployeeForCompany
     (Guid companyId, Guid id, [FromBody] JsonPatchDocument<EmployeeForUpdateDto>? patchDoc)
     {

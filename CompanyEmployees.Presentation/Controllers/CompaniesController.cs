@@ -16,7 +16,8 @@ public class CompaniesController : ControllerBase
         _service = service;
 
 
-    [HttpGet]
+    [HttpGet(Name = "GetCompanies")]
+    [HttpHead]
     public async Task<IActionResult> GetCompanies()
     {
         var companies =
@@ -33,7 +34,7 @@ public class CompaniesController : ControllerBase
         return Ok(company);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreateCompany")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto? company)
     {
@@ -79,5 +80,12 @@ public class CompaniesController : ControllerBase
         await _service.CompanyService.UpdateCompanyAsync(id, company!, trackChanges: true);
 
         return NoContent();
+    }
+
+    [HttpOptions]
+    public IActionResult GetCompaniesOptions()
+    {
+        Response.Headers.Add("Allow", "GET, OPTIONS, POST");
+        return Ok();
     }
 }

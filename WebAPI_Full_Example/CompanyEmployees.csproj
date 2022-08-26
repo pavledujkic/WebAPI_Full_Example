@@ -8,9 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="internal_logs\**" />
     <Compile Remove="logs\**" />
+    <Content Remove="internal_logs\**" />
     <Content Remove="logs\**" />
+    <EmbeddedResource Remove="internal_logs\**" />
     <EmbeddedResource Remove="logs\**" />
+    <None Remove="internal_logs\**" />
     <None Remove="logs\**" />
   </ItemGroup>
 
@@ -32,6 +36,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Utility\" />
   </ItemGroup>
 
 </Project>

@@ -3,6 +3,7 @@ using System.Dynamic;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Entities.LinkModels;
 
 namespace Entities.Models;
 
@@ -23,20 +24,22 @@ public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, objec
         
         result = value;
         return true;
-
     }
 
 	public override bool TrySetMember(SetMemberBinder binder, object? value)
-	{
-		_expando[binder.Name] = value;
+    {
+        if (value is null)
+            return false;
+        
+        _expando[binder.Name] = value;
 
 		return true;
 	}
 
-	public XmlSchema GetSchema()
-	{
-		throw new NotImplementedException();
-	}
+	public XmlSchema? GetSchema()
+    {
+        return null;
+    }
 
 	public void ReadXml(XmlReader reader)
 	{
@@ -69,9 +72,24 @@ public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, objec
 
 	private void WriteLinksToXml(string key, object? value, XmlWriter writer)
 	{
-		writer.WriteStartElement(key);
-		writer.WriteString(value!.ToString());
-		writer.WriteEndElement();
+        writer.WriteStartElement(key);
+        
+        if (value?.GetType() == typeof(List<Link>))
+        {
+            foreach (var val in (value as List<Link>)!)
+            {
+                writer.WriteStartElement(nameof(Link));
+                WriteLinksToXml(nameof(val.Href), val.Href, writer);
+                WriteLinksToXml(nameof(val.Method), val.Method, writer);
+                WriteLinksToXml(nameof(val.Rel), val.Rel, writer);
+                writer.WriteEndElement();
+            }
+        }
+        else
+        {
+            writer.WriteString(value?.ToString());
+        }
+        writer.WriteEndElement();
 	}
 
 	public void Add(string key, object? value) => _expando.Add(key, value);

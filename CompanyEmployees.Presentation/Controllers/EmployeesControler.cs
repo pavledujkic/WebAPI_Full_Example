@@ -10,6 +10,7 @@ using Shared.RequestFeatures;
 
 namespace CompanyEmployees.Presentation.Controllers;
 
+[ApiVersion("1.0")]
 [Route("api/companies/{companyId:guid}/employees")]
 [ApiController]
 public class EmployeesControler : ControllerBase

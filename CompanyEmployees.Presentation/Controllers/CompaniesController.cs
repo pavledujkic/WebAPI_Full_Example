@@ -6,6 +6,7 @@ using Shared.DataTransferObjects;
 
 namespace CompanyEmployees.Presentation.Controllers;
 
+[ApiVersion("1.0")]
 [Route("api/companies")]
 [ApiController]
 public class CompaniesController : ControllerBase
@@ -15,8 +16,8 @@ public class CompaniesController : ControllerBase
     public CompaniesController(IServiceManager service) =>
         _service = service;
 
-
     [HttpGet(Name = "GetCompanies")]
+    [ResponseCache(Duration = 60)]
     [HttpHead]
     public async Task<IActionResult> GetCompanies()
     {

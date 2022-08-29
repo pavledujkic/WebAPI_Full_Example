@@ -1,5 +1,6 @@
 ﻿using CompanyEmployees.Presentation.ActionFilters;
 using CompanyEmployees.Presentation.ModelBinders;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -17,8 +18,9 @@ public class CompaniesController : ControllerBase
         _service = service;
 
     [HttpGet(Name = "GetCompanies")]
-    [ResponseCache(Duration = 60)]
     [HttpHead]
+    [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)] 
+    [HttpCacheValidation(MustRevalidate = false)]
     public async Task<IActionResult> GetCompanies()
     {
         var companies =

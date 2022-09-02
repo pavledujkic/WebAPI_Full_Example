@@ -20,7 +20,7 @@ public class OrderQueryBuilder
 
             var propertyFromQueryName = param.Split(" ")[0];
 
-            PropertyInfo? objectProperty = propertyInfos.FirstOrDefault(pi =>
+            var objectProperty = propertyInfos.FirstOrDefault(pi =>
                 pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
 
             if (objectProperty == null)

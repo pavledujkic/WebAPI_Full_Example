@@ -4,6 +4,7 @@ using Shared.DataTransferObjects;
 
 namespace CompanyEmployees;
 
+// ReSharper disable once UnusedMember.Global
 public class MappingProfile : Profile
 {
     public MappingProfile()
@@ -22,5 +23,7 @@ public class MappingProfile : Profile
         CreateMap<EmployeeForUpdateDto, Employee>().ReverseMap();
 
         CreateMap<CompanyForUpdateDto, Company>();
+
+        CreateMap<UserForRegistrationDto, User>();
     }
 }

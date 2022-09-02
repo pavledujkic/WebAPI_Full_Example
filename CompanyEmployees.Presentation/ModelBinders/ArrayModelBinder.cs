@@ -23,9 +23,9 @@ public class ArrayModelBinder : IModelBinder
             return Task.CompletedTask;
         }
 
-        Type genericType = bindingContext.ModelMetadata.ModelType.GetTypeInfo().GenericTypeArguments[0];
+        var genericType = bindingContext.ModelMetadata.ModelType.GetTypeInfo().GenericTypeArguments[0];
 
-        TypeConverter converter = TypeDescriptor.GetConverter(genericType);
+        var converter = TypeDescriptor.GetConverter(genericType);
 
         var objectArray = providedValue.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
             .Select(s => converter.ConvertFromString(s.Trim()))

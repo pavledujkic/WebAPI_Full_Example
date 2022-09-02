@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using CompanyEmployees.Presentation.ActionFilters;
 using Entities.LinkModels;
-using Entities.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
@@ -27,7 +26,7 @@ public class EmployeesControler : ControllerBase
     {
         var linkParams = new LinkParameters(employeeParameters, HttpContext);
         
-        (LinkResponse? linkResponse, MetaData? metaData) = 
+        var (linkResponse, metaData) = 
             await _service.EmployeeService.GetEmployeesAsync(companyId, 
                 linkParams, trackChanges: false);
 
@@ -42,7 +41,7 @@ public class EmployeesControler : ControllerBase
     [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
     public async Task<IActionResult> GetEmployeeForCompany(Guid companyId, Guid id)
     {
-        EmployeeDto employee = await _service.EmployeeService.GetEmployeeAsync(companyId, id,
+        var employee = await _service.EmployeeService.GetEmployeeAsync(companyId, id,
             trackChanges: false);
 
         return Ok(employee);
@@ -53,7 +52,7 @@ public class EmployeesControler : ControllerBase
     public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId,
         [FromBody] EmployeeForCreationDto? employee)
     {
-        EmployeeDto employeeToReturn = await
+        var employeeToReturn = await
             _service.EmployeeService.CreateEmployeeForCompany(companyId, employee!,
                 trackChanges: false);
 
@@ -82,15 +81,18 @@ public class EmployeesControler : ControllerBase
     }
 
     [HttpPatch("{id:guid}", Name = "PartiallyUpdateEmployeeForCompany")]
-    public async Task<IActionResult> PartiallyUpdateEmployeeForCompany
-    (Guid companyId, Guid id, [FromBody] JsonPatchDocument<EmployeeForUpdateDto>? patchDoc)
-    {
-        if (patchDoc is null)
-            return BadRequest("patchDoc object sent from client is null.");
+    public Task<IActionResult> PartiallyUpdateEmployeeForCompany
+    (Guid companyId, Guid id, [FromBody] JsonPatchDocument<EmployeeForUpdateDto>? patchDoc) =>
+        patchDoc is null
+            ? Task.FromResult<IActionResult>(BadRequest("patchDoc object sent from client is null."))
+            : PartiallyUpdateEmployeeForCompanyActionResult(companyId, id, patchDoc);
 
-        (EmployeeForUpdateDto? employeeToPatch, Employee? employeeEntity) =
+    private async Task<IActionResult> PartiallyUpdateEmployeeForCompanyActionResult(Guid companyId, 
+        Guid id, JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
+    {
+        var (employeeToPatch, employeeEntity) =
             await _service.EmployeeService.GetEmployeeForPatchAsync(companyId, id,
-            compTrackChanges: false, empTrackChanges: true);
+                compTrackChanges: false, empTrackChanges: true);
 
         patchDoc.ApplyTo(employeeToPatch, ModelState);
 

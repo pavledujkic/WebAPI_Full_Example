@@ -51,7 +51,7 @@ internal sealed class EmployeeService : IEmployeeService
     {
         await CheckIfCompanyExists(companyId, trackChanges);
 
-        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId,
+        var employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId,
             id, trackChanges);
 
         var employee = _mapper.Map<EmployeeDto>(employeeDb);
@@ -78,7 +78,7 @@ internal sealed class EmployeeService : IEmployeeService
     {
         await CheckIfCompanyExists(companyId, trackChanges);
 
-        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId,
+        var employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId,
             id, trackChanges);
 
         _repository.Employee.DeleteEmployee(employeeDb);
@@ -91,7 +91,7 @@ internal sealed class EmployeeService : IEmployeeService
     {
         await CheckIfCompanyExists(companyId, compTrackChanges);
 
-        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId,
+        var employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId,
             id, empTrackChanges);
 
         _mapper.Map(employeeForUpdate, employeeDb);
@@ -104,7 +104,7 @@ internal sealed class EmployeeService : IEmployeeService
     {
         await CheckIfCompanyExists(companyId, compTrackChanges);
 
-        Employee employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId, id,
+        var employeeDb = await GetEmployeeForCompanyAndCheckIfItExists(companyId, id,
             empTrackChanges);
 
         var employeeToPatch = _mapper.Map<EmployeeForUpdateDto>(employeeDb);
@@ -121,7 +121,7 @@ internal sealed class EmployeeService : IEmployeeService
 
     private async Task CheckIfCompanyExists(Guid companyId, bool trackChanges)
     {
-        Company? company = await _repository.Company.GetCompanyAsync(companyId,
+        var company = await _repository.Company.GetCompanyAsync(companyId,
             trackChanges);
 
         if (company is null)
@@ -131,7 +131,7 @@ internal sealed class EmployeeService : IEmployeeService
     private async Task<Employee> GetEmployeeForCompanyAndCheckIfItExists
         (Guid companyId, Guid id, bool trackChanges)
     {
-        Employee? employeeDb = await _repository.Employee.GetEmployeeAsync(companyId, id,
+        var employeeDb = await _repository.Employee.GetEmployeeAsync(companyId, id,
             trackChanges);
 
         if (employeeDb is null)

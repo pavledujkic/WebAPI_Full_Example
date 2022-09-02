@@ -33,7 +33,7 @@ internal sealed class CompanyService : ICompanyService
 
     public async Task<CompanyDto?> GetCompanyAsync(Guid companyId, bool trackChanges)
     {
-        Company company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
+        var company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
 
         var companyDto = _mapper.Map<CompanyDto>(company);
 
@@ -77,7 +77,7 @@ internal sealed class CompanyService : ICompanyService
 
         var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
 
-        foreach (Company company in companyEntities)
+        foreach (var company in companyEntities)
         {
             _repository.Company.CreateCompany(company);
         }
@@ -92,7 +92,7 @@ internal sealed class CompanyService : ICompanyService
 
     public async Task DeleteCompanyAsync(Guid companyId, bool trackChanges)
     {
-        Company company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
+        var company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
 
         _repository.Company.DeleteCompany(company);
         await _repository.SaveAsync();
@@ -100,7 +100,7 @@ internal sealed class CompanyService : ICompanyService
 
     public async Task UpdateCompanyAsync(Guid companyId, CompanyForUpdateDto companyForUpdate, bool trackChanges)
     {
-        Company company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
+        var company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
 
         _mapper.Map(companyForUpdate, company);
         await _repository.SaveAsync();
@@ -108,7 +108,7 @@ internal sealed class CompanyService : ICompanyService
 
     private async Task<Company> GetCompanyAndCheckIfItExists(Guid companyId, bool trackChanges)
     {
-        Company? company = await
+        var company = await
             _repository.Company.GetCompanyAsync(companyId, trackChanges);
 
         if (company is null)

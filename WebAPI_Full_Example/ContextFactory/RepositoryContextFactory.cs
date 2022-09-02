@@ -4,11 +4,12 @@ using Repository;
 
 namespace CompanyEmployees.ContextFactory;
 
+// ReSharper disable once UnusedMember.Global
 public class RepositoryContextFactory : IDesignTimeDbContextFactory<RepositoryContext>
 {
     public RepositoryContext CreateDbContext(string[] args)
     {
-        IConfigurationRoot? configuration = new ConfigurationBuilder()
+        var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();

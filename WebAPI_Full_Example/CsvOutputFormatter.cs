@@ -26,12 +26,12 @@ public class CsvOutputFormatter : TextOutputFormatter
 
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
     {
-        HttpResponse response = context.HttpContext.Response;
+        var response = context.HttpContext.Response;
         var buffer = new StringBuilder(100);
 
         if (context.Object is IEnumerable<CompanyDto> dtos)
         {
-            foreach (CompanyDto company in dtos)
+            foreach (var company in dtos)
             {
                 FormatCsv(buffer, company);
             }

@@ -32,12 +32,12 @@ public class EmployeeLinks : IEmployeeLinks
         return ReturnShapedEmployees(shapedEmployees);
     }
 
-    private List<Entity> ShapeData(IEnumerable<EmployeeDto> employeesDto, string? fields) =>
+    private List<Entity> ShapeData(List<EmployeeDto> employeesDto, string? fields) =>
         _dataShaper.ShapeData(employeesDto, fields)
                 .Select(e => e.Entity)
                 .ToList();
 
-    private bool ShouldGenerateLinks(HttpContext httpContext)
+    private static bool ShouldGenerateLinks(HttpContext httpContext)
     {
         var mediaType = (MediaTypeHeaderValue)httpContext.Items["AcceptHeaderMediaType"]!;
 
@@ -45,10 +45,10 @@ public class EmployeeLinks : IEmployeeLinks
             StringComparison.InvariantCultureIgnoreCase);
     }
 
-    private LinkResponse ReturnShapedEmployees(List<Entity> shapedEmployees) =>
+    private static LinkResponse ReturnShapedEmployees(List<Entity> shapedEmployees) =>
         new() { ShapedEntities = shapedEmployees };
 
-    private LinkResponse ReturnLinkedEmployees(IEnumerable<EmployeeDto> employeesDto,
+    private LinkResponse ReturnLinkedEmployees(List<EmployeeDto> employeesDto,
         string? fields, Guid companyId, HttpContext httpContext, List<Entity> shapedEmployees)
     {
         var employeeDtoList = employeesDto.ToList();
@@ -71,20 +71,24 @@ public class EmployeeLinks : IEmployeeLinks
     private List<Link> CreateLinksForEmployee(HttpContext httpContext, Guid companyId,
         Guid id, string? fields = "")
     {
-        var links = new List<Link>
+        var links = new List<Link>(4)
         {
+            // ReSharper disable once Mvc.ActionNotResolved
             new(_linkGenerator.GetUriByAction(httpContext, "GetEmployeeForCompany",
                     values: new { companyId, id, fields })!,
                 "self",
                 "GET"),
+            // ReSharper disable once Mvc.ActionNotResolved
             new(_linkGenerator.GetUriByAction(httpContext, "DeleteEmployeeForCompany",
                     values: new { companyId, id })!,
                 "delete_employee",
                 "DELETE"),
+            // ReSharper disable once Mvc.ActionNotResolved
             new(_linkGenerator.GetUriByAction(httpContext, "UpdateEmployeeForCompany",
                     values: new { companyId, id })!,
                 "update_employee",
                 "PUT"),
+            // ReSharper disable once Mvc.ActionNotResolved
             new(_linkGenerator.GetUriByAction(httpContext, "PartiallyUpdateEmployeeForCompany",
                     values: new { companyId, id })!,
                 "partially_update_employee",
@@ -97,6 +101,7 @@ public class EmployeeLinks : IEmployeeLinks
     private LinkCollectionWrapper<Entity> CreateLinksForEmployees(HttpContext httpContext,
         LinkCollectionWrapper<Entity> employeesWrapper)
     {
+        // ReSharper disable once Mvc.ActionNotResolved
         employeesWrapper.Links = new Link(_linkGenerator.GetUriByAction(httpContext, 
                 "GetEmployeesForCompany", values: new { })!, 
             "self", 

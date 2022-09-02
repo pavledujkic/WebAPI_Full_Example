@@ -1,6 +1,7 @@
 ﻿using CompanyEmployees.Presentation.ActionFilters;
 using CompanyEmployees.Presentation.ModelBinders;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -19,6 +20,7 @@ public class CompaniesController : ControllerBase
 
     [HttpGet(Name = "GetCompanies")]
     [HttpHead]
+    [Authorize(Roles = "Manager")]
     [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)] 
     [HttpCacheValidation(MustRevalidate = false)]
     public async Task<IActionResult> GetCompanies()
@@ -32,7 +34,7 @@ public class CompaniesController : ControllerBase
     [HttpGet("{id:guid}", Name = "CompanyById")]
     public async Task<IActionResult> GetCompany(Guid id)
     {
-        CompanyDto? company = await _service.CompanyService.GetCompanyAsync(id, trackChanges: false);
+        var company = await _service.CompanyService.GetCompanyAsync(id, trackChanges: false);
 
         return Ok(company);
     }
@@ -41,7 +43,7 @@ public class CompaniesController : ControllerBase
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto? company)
     {
-        CompanyDto createdCompany = await _service.CompanyService.CreateCompanyAsync(company!);
+        var createdCompany = await _service.CompanyService.CreateCompanyAsync(company!);
 
         return CreatedAtRoute("CompanyById", new { id = createdCompany.Id },
             createdCompany);

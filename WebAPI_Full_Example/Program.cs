@@ -11,7 +11,7 @@ using NLog;
 using Service.DataShaping;
 using Shared.DataTransferObjects;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(),
     "/nlog.config"));
@@ -50,8 +50,9 @@ builder.Services.ConfigureRateLimitingOptions();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication();
 builder.Services.ConfigureIdentity();
+builder.Services.ConfigureJwt(builder.Configuration);
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 
 var logger = app.Services.GetRequiredService<ILoggerManager>();
 app.ConfigureExceptionHandler(logger);
@@ -75,7 +76,7 @@ app.MapControllers();
 
 app.Run();
 
-NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter() =>
+static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter() =>
     new ServiceCollection().AddLogging().AddMvc().AddNewtonsoftJson()
         .Services.BuildServiceProvider()
         .GetRequiredService<IOptions<MvcOptions>>().Value.InputFormatters

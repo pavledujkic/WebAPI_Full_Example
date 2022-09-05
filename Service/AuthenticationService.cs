@@ -8,7 +8,7 @@ using Entities.ConfigurationModels;
 using Entities.Exceptions;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -20,27 +20,24 @@ internal sealed class AuthenticationService : IAuthenticationService
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
     private readonly UserManager<User> _userManager;
-    private readonly IConfiguration _configuration;
     private readonly JwtConfiguration _jwtConfiguration;
 
     private User? _user;
 
     public AuthenticationService(ILoggerManager logger, IMapper mapper,
-        UserManager<User> userManager, IConfiguration configuration)
+        UserManager<User> userManager, IOptions<JwtConfiguration> configuration)
     {
         _logger = logger;
         _mapper = mapper;
         _userManager = userManager;
-        _configuration = configuration;
-        _jwtConfiguration = new JwtConfiguration();
-        _configuration.Bind(_jwtConfiguration.Section, _jwtConfiguration);
+        _jwtConfiguration = configuration.Value;
     }
 
     public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistration)
     {
-        User user = _mapper.Map<User>(userForRegistration);
+        var user = _mapper.Map<User>(userForRegistration);
 
-        IdentityResult result = await _userManager.CreateAsync(user,
+        var result = await _userManager.CreateAsync(user,
             userForRegistration.Password);
 
         if (result.Succeeded)
@@ -53,7 +50,7 @@ internal sealed class AuthenticationService : IAuthenticationService
     {
         _user = await _userManager.FindByNameAsync(userForAuth.UserName);
 
-        bool result = _user != null && await _userManager.CheckPasswordAsync(_user,
+        var result = _user != null && await _userManager.CheckPasswordAsync(_user,
             userForAuth.Password);
 
         if (!result)
@@ -65,11 +62,11 @@ internal sealed class AuthenticationService : IAuthenticationService
 
     public async Task<TokenDto> CreateToken(bool populateExp)
     {
-        SigningCredentials signingCredentials = GetSigningCredentials();
-        List<Claim> claims = await GetClaims();
-        JwtSecurityToken tokenOptions = GenerateTokenOptions(signingCredentials, claims);
+        var signingCredentials = GetSigningCredentials();
+        var claims = await GetClaims();
+        var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
 
-        string refreshToken = GenerateRefreshToken();
+        var refreshToken = GenerateRefreshToken();
 
         _user!.RefreshToken = refreshToken;
 
@@ -78,29 +75,29 @@ internal sealed class AuthenticationService : IAuthenticationService
 
         await _userManager.UpdateAsync(_user);
 
-        string accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
         return new TokenDto(accessToken, refreshToken);
     }
 
     private static SigningCredentials GetSigningCredentials()
     {
-        byte[] key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")!);
-        SymmetricSecurityKey secret = new SymmetricSecurityKey(key);
+        var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")!);
+        var secret = new SymmetricSecurityKey(key);
 
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
 
     private async Task<List<Claim>> GetClaims()
     {
-        List<Claim> claims = new List<Claim>
+        var claims = new List<Claim>
         {
             new(ClaimTypes.Name, _user!.UserName)
         };
 
         IList<string> roles = await _userManager.GetRolesAsync(_user);
 
-        foreach (string? role in roles)
+        foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
@@ -119,9 +116,9 @@ internal sealed class AuthenticationService : IAuthenticationService
 
     private static string GenerateRefreshToken()
     {
-        byte[] randomNumber = new byte[32];
+        var randomNumber = new byte[32];
 
-        using RandomNumberGenerator rng = RandomNumberGenerator.Create();
+        using var rng = RandomNumberGenerator.Create();
 
         rng.GetBytes(randomNumber);
 
@@ -132,7 +129,7 @@ internal sealed class AuthenticationService : IAuthenticationService
     {
         //var jwtSettings = _configuration.GetSection("JwtSettings");
 
-        TokenValidationParameters tokenValidationParameters = new TokenValidationParameters
+        var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = true,
             ValidateIssuer = true,
@@ -144,10 +141,10 @@ internal sealed class AuthenticationService : IAuthenticationService
             ValidAudience = _jwtConfiguration.ValidAudience
         };
 
-        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+        var tokenHandler = new JwtSecurityTokenHandler();
 
-        ClaimsPrincipal principal = tokenHandler.ValidateToken(token, tokenValidationParameters,
-            out SecurityToken? securityToken);
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters,
+            out var securityToken);
 
         if (securityToken is not JwtSecurityToken jwtSecurityToken ||
             !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
@@ -161,9 +158,9 @@ internal sealed class AuthenticationService : IAuthenticationService
 
     public async Task<TokenDto> RefreshToken(TokenDto tokenDto)
     {
-        ClaimsPrincipal principal = GetPrincipalFromExpiredToken(tokenDto.AccessToken);
+        var principal = GetPrincipalFromExpiredToken(tokenDto.AccessToken);
 
-        User user = await _userManager.FindByNameAsync(principal.Identity!.Name);
+        var user = await _userManager.FindByNameAsync(principal.Identity!.Name);
 
         if (user == null || user.RefreshToken != tokenDto.RefreshToken ||
             user.RefreshTokenExpiryTime <= DateTime.Now)

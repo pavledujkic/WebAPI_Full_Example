@@ -19,9 +19,9 @@ public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, objec
 
 	public override bool TryGetMember(GetMemberBinder binder, out object? result)
 	{
-        if (!_expando.TryGetValue(binder.Name, out var value)) 
+        if (!_expando.TryGetValue(binder.Name, out var value))
             return base.TryGetMember(binder, out result);
-        
+
         result = value;
         return true;
     }
@@ -30,7 +30,7 @@ public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, objec
     {
         if (value is null)
             return false;
-        
+
         _expando[binder.Name] = value;
 
 		return true;
@@ -50,13 +50,13 @@ public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, objec
             var name = reader.Name;
 
 			reader.MoveToAttribute("type");
-            
+
 			var typeContent = reader.ReadContentAsString();
-            
+
 			var underlyingType = Type.GetType(typeContent);
-            
+
 			reader.MoveToContent();
-            
+
 			_expando[name] = reader.ReadElementContentAs(underlyingType!, null!);
 		}
 	}
@@ -73,7 +73,7 @@ public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, objec
 	private void WriteLinksToXml(string key, object? value, XmlWriter writer)
 	{
         writer.WriteStartElement(key);
-        
+
         if (value?.GetType() == typeof(List<Link>))
         {
             foreach (var val in (value as List<Link>)!)
@@ -100,7 +100,7 @@ public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, objec
 
     public bool Remove(string key) => _expando.Remove(key);
 
-    public bool TryGetValue(string key, out object value) => 
+    public bool TryGetValue(string key, out object value) =>
         _expando.TryGetValue(key, out value!);
 
     public ICollection<object> Values => _expando.Values!;
@@ -108,7 +108,7 @@ public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, objec
     public object this[string key]
 	{
 		get => _expando[key]!;
-        
+
         set => _expando[key] = value;
     }
 
@@ -116,10 +116,10 @@ public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, objec
 
     public void Clear() => _expando.Clear();
 
-    public bool Contains(KeyValuePair<string, object> item) => 
+    public bool Contains(KeyValuePair<string, object> item) =>
         _expando.Contains(item!);
 
-    public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex) => 
+    public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex) =>
         _expando.CopyTo(array!, arrayIndex);
 
     public int Count => _expando.Count;

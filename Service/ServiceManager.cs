@@ -18,19 +18,19 @@ public sealed class ServiceManager : IServiceManager
         logger, IMapper mapper, IEmployeeLinks employeeLinks, UserManager<User> userManager,
         IOptions<JwtConfiguration> configuration)
     {
-        _companyService = new Lazy<ICompanyService>(() => 
+        _companyService = new Lazy<ICompanyService>(() =>
             new CompanyService(repositoryManager, logger, mapper));
-        
-        _employeeService = new Lazy<IEmployeeService>(() => 
+
+        _employeeService = new Lazy<IEmployeeService>(() =>
             new EmployeeService(repositoryManager, logger, mapper, employeeLinks));
-        
+
         _authenticationService = new Lazy<IAuthenticationService>(() =>
-            new AuthenticationService(logger, mapper, userManager, 
+            new AuthenticationService(logger, mapper, userManager,
                 configuration));
     }
 
     public ICompanyService CompanyService => _companyService.Value;
     public IEmployeeService EmployeeService => _employeeService.Value;
-    public IAuthenticationService AuthenticationService => 
+    public IAuthenticationService AuthenticationService =>
         _authenticationService.Value;
 }

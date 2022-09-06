@@ -33,10 +33,7 @@ public static class ServiceExtensions
 
     // ReSharper disable once InconsistentNaming
     public static void ConfigureIISIntegration(this IServiceCollection services) =>
-        services.Configure<IISOptions>(options =>
-        {
-            options.AuthenticationDisplayName = "IISOptions";
-        });
+        services.Configure<IISOptions>(options => options.AuthenticationDisplayName = "IISOptions");
 
     public static void ConfigureLoggerService(this IServiceCollection services) =>
         services.AddSingleton<ILoggerManager, LoggerManager>();
@@ -74,7 +71,6 @@ public static class ServiceExtensions
                 .SupportedMediaTypes
                 .Add("application/vnd.pd.apiroot+json");
 
-
             var xmlOutputFormatter = config
                 .OutputFormatters
                 .OfType<XmlDataContractSerializerOutputFormatter>()
@@ -111,10 +107,7 @@ public static class ServiceExtensions
                 expirationOpt.MaxAge = 65;
                 expirationOpt.CacheLocation = CacheLocation.Private;
             },
-            validationOpt =>
-            {
-                validationOpt.MustRevalidate = true;
-            });
+            validationOpt => validationOpt.MustRevalidate = true);
 
     public static void ConfigureRateLimitingOptions(this IServiceCollection services)
     {
@@ -192,7 +185,7 @@ public static class ServiceExtensions
         {
             s.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "PD API", 
+                Title = "PD API",
                 Version = "v1",
                 Description = "CompanyEmployees API by PD",
                 TermsOfService = new Uri("https://example.com/terms"),
@@ -208,11 +201,10 @@ public static class ServiceExtensions
                     Url = new Uri("https://example.com/license"),
                 }
             });
-            s.SwaggerDoc("v2", new OpenApiInfo { Title = "PD API", Version = "v2" });
 
             var xmlFile = $"{typeof(Presentation.AssemblyReference).Assembly.GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            
+
             s.IncludeXmlComments(xmlPath);
 
             s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

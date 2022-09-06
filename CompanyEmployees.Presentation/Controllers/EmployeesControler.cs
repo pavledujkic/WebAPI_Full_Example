@@ -25,15 +25,15 @@ public class EmployeesControler : ControllerBase
         [FromQuery] EmployeeParameters employeeParameters)
     {
         var linkParams = new LinkParameters(employeeParameters, HttpContext);
-        
-        var (linkResponse, metaData) = 
-            await _service.EmployeeService.GetEmployeesAsync(companyId, 
+
+        var (linkResponse, metaData) =
+            await _service.EmployeeService.GetEmployeesAsync(companyId,
                 linkParams, trackChanges: false);
 
-        Response.Headers.Add("X-Pagination", 
+        Response.Headers.Add("X-Pagination",
             JsonSerializer.Serialize(metaData));
 
-        return linkResponse.HasLinks ? 
+        return linkResponse.HasLinks ?
             Ok(linkResponse.LinkedEntities) :
             Ok(linkResponse.ShapedEntities);
     }
@@ -87,7 +87,7 @@ public class EmployeesControler : ControllerBase
             ? Task.FromResult<IActionResult>(BadRequest("patchDoc object sent from client is null."))
             : PartiallyUpdateEmployeeForCompanyActionResult(companyId, id, patchDoc);
 
-    private async Task<IActionResult> PartiallyUpdateEmployeeForCompanyActionResult(Guid companyId, 
+    private async Task<IActionResult> PartiallyUpdateEmployeeForCompanyActionResult(Guid companyId,
         Guid id, JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
     {
         var (employeeToPatch, employeeEntity) =

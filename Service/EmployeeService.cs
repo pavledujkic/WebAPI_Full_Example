@@ -16,7 +16,6 @@ internal sealed class EmployeeService : IEmployeeService
     private readonly IMapper _mapper;
     private readonly IEmployeeLinks _employeeLinks;
 
-
     public EmployeeService(IRepositoryManager repository, ILoggerManager
         logger, IMapper mapper, IEmployeeLinks employeeLinks)
     {
@@ -35,13 +34,13 @@ internal sealed class EmployeeService : IEmployeeService
         await CheckIfCompanyExists(companyId, trackChanges);
 
         var employeesWithMetaData = await _repository.Employee
-            .GetEmployeesAsync(companyId, linkParameters.EmployeeParameters, 
+            .GetEmployeesAsync(companyId, linkParameters.EmployeeParameters,
                 trackChanges);
 
         var employeesDto =
             _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
 
-        var links = _employeeLinks.TryGenerateLinks(employeesDto, 
+        var links = _employeeLinks.TryGenerateLinks(employeesDto,
             linkParameters.EmployeeParameters.Fields, companyId, linkParameters.Context);
 
         return (linkResponse: links, metaData: employeesWithMetaData.MetaData);

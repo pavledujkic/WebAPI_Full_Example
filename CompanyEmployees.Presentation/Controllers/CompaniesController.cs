@@ -26,7 +26,7 @@ public class CompaniesController : ControllerBase
     [HttpGet(Name = "GetCompanies")]
     [HttpHead]
     [Authorize(Roles = "Manager")]
-    [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)] 
+    [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)]
     [HttpCacheValidation(MustRevalidate = false)]
     public async Task<IActionResult> GetCompanies()
     {

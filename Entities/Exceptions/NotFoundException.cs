@@ -6,4 +6,12 @@ public abstract class NotFoundException : Exception
         : base(message)
     {
     }
+
+    protected NotFoundException() : base()
+    {
+    }
+
+    protected NotFoundException(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
 }

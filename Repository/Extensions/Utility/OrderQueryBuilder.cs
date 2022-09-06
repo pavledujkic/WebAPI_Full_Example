@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Repository.Extensions.Utility;
 
-public class OrderQueryBuilder
+public static class OrderQueryBuilder
 {
     public static string CreateOrderQuery<T>(string orderByQueryString)
     {
@@ -28,11 +28,9 @@ public class OrderQueryBuilder
 
             var direction = param.EndsWith(" desc") ? "descending" : "ascending";
 
-            orderQueryBuilder.Append($"{objectProperty.Name} {direction}, ");
+            orderQueryBuilder.Append(objectProperty.Name).Append(' ').Append(direction).Append(", ");
         }
 
-        var orderQuery = orderQueryBuilder.ToString().TrimEnd(',', ' ');
-
-        return orderQuery;
+        return orderQueryBuilder.ToString().TrimEnd(',', ' ');
     }
 }

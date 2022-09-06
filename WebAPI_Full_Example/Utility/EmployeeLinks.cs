@@ -26,8 +26,10 @@ public class EmployeeLinks : IEmployeeLinks
         var shapedEmployees = ShapeData(employeesDtoList, fields);
 
         if (ShouldGenerateLinks(httpContext))
+        {
             return ReturnLinkedEmployees(employeesDtoList, fields,
                 companyId, httpContext, shapedEmployees);
+        }
 
         return ReturnShapedEmployees(shapedEmployees);
     }
@@ -102,9 +104,9 @@ public class EmployeeLinks : IEmployeeLinks
         LinkCollectionWrapper<Entity> employeesWrapper)
     {
         // ReSharper disable once Mvc.ActionNotResolved
-        employeesWrapper.Links = new Link(_linkGenerator.GetUriByAction(httpContext, 
-                "GetEmployeesForCompany", values: new { })!, 
-            "self", 
+        employeesWrapper.Links = new Link(_linkGenerator.GetUriByAction(httpContext,
+                "GetEmployeesForCompany", values: new { })!,
+            "self",
             "GET");
 
         return employeesWrapper;

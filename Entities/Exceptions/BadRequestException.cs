@@ -6,4 +6,12 @@ public abstract class BadRequestException : Exception
         : base(message)
     {
     }
+
+    protected BadRequestException() : base()
+    {
+    }
+
+    protected BadRequestException(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
 }

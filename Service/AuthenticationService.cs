@@ -54,8 +54,10 @@ internal sealed class AuthenticationService : IAuthenticationService
             userForAuth.Password);
 
         if (!result)
+        {
             _logger.LogWarn(
                 $"{nameof(ValidateUser)}: Authentication failed. Wrong user name or password.");
+        }
 
         return result;
     }
@@ -90,7 +92,7 @@ internal sealed class AuthenticationService : IAuthenticationService
 
     private async Task<List<Claim>> GetClaims()
     {
-        var claims = new List<Claim>
+        var claims = new List<Claim>(2)
         {
             new(ClaimTypes.Name, _user!.UserName)
         };
@@ -164,7 +166,9 @@ internal sealed class AuthenticationService : IAuthenticationService
 
         if (user == null || user.RefreshToken != tokenDto.RefreshToken ||
             user.RefreshTokenExpiryTime <= DateTime.Now)
+        {
             throw new RefreshTokenBadRequest();
+        }
 
         _user = user;
 

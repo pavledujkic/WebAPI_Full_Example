@@ -9,22 +9,22 @@ namespace CompanyEmployees.Presentation.Controllers;
 public class RootController : ControllerBase
 {
     private readonly LinkGenerator _linkGenerator;
-    
+
     public RootController(LinkGenerator linkGenerator) =>
         _linkGenerator = linkGenerator;
 
     [HttpGet(Name = "GetRoot")]
     public IActionResult GetRoot([FromHeader(Name = "Accept")] string mediaType)
     {
-        if (!mediaType.Contains("application/vnd.pd.apiroot")) 
+        if (!mediaType.Contains("application/vnd.pd.apiroot"))
             return NoContent();
-        
+
         var list = new List<Link>(3)
         {
             new()
-            { 
+            {
                 Href = _linkGenerator.GetUriByName(HttpContext, nameof(GetRoot), new {}),
-                Rel = "self", 
+                Rel = "self",
                 Method = "GET"
             },
             new()
@@ -40,7 +40,7 @@ public class RootController : ControllerBase
                 Method = "POST"
             }
         };
-        
+
         return Ok(list);
     }
 }

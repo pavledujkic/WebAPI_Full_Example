@@ -46,6 +46,6 @@ public class CsvOutputFormatter : TextOutputFormatter
 
     private static void FormatCsv(StringBuilder buffer, CompanyDto company)
     {
-        buffer.AppendLine($"{company.Id},\"{company.Name},\"{company.FullAddress}\"");
+        buffer.Append(company.Id).Append(",\"").Append(company.Name).Append(",\"").Append(company.FullAddress).AppendLine("\"");
     }
 }

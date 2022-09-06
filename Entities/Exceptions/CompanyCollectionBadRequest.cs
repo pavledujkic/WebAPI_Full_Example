@@ -6,4 +6,12 @@ public sealed class CompanyCollectionBadRequest : BadRequestException
         : base("Company collection sent from a client is null.")
     {
     }
+
+    public CompanyCollectionBadRequest(string message) : base(message)
+    {
+    }
+
+    public CompanyCollectionBadRequest(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
 }
